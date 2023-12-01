@@ -18,6 +18,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.metrics import classification_report, accuracy_score, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import cross_val_score, KFold, train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import resample
 
 data = pd.read_csv("./bicycle-thefts-open-data.csv")
@@ -169,7 +170,7 @@ plt.style.use("ggplot")
 cm = confusion_matrix(y_test, y_pred, labels=lr_model.classes_)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=lr_model.classes_)
 disp.plot()
-plt.title("Confusion Matrix")
+plt.title("Logistic Regression Confusion Matrix")
 plt.xlabel("Predicted")
 plt.ylabel("True")
 plt.show()
@@ -178,4 +179,35 @@ joblib.dump(lr_model, "./lr_model.pkl")
 print("Model dumped!")
 
 joblib.dump(column_names, "./lr_model_columns.pkl")
+print("Model columns dumped!")
+
+# Decision Trees
+dt_model = DecisionTreeClassifier(
+    criterion='entropy', max_depth=5, min_samples_split=20, random_state=99)
+
+dt_model.fit(x_train, y_train)
+score = np.mean(cross_val_score(dt_model, x_train, y_train,
+                scoring="accuracy", cv=crossvalidation, n_jobs=1))
+print('The score of the 10 fold run is: ', score)
+
+y_pred = dt_model.predict(x_test)
+
+print('Classification Report(N): \n', classification_report(y_test, y_pred))
+print('Confusion Matrix(N): \n', confusion_matrix(y_test, y_pred))
+print('Accuracy(N): \n', accuracy_score(y_test, y_pred))
+print("ROC-AUC:", roc_auc_score(y_test, y_pred))
+
+plt.style.use("ggplot")
+cm = confusion_matrix(y_test, y_pred, labels=dt_model.classes_)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=dt_model.classes_)
+disp.plot()
+plt.title("Decision Trees Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.show()
+
+joblib.dump(lr_model, "./dt_model.pkl")
+print("Model dumped!")
+
+joblib.dump(column_names, "./dt_model_columns.pkl")
 print("Model columns dumped!")
