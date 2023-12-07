@@ -16,7 +16,7 @@ from datetime import datetime
 from sklearn import preprocessing
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import classification_report, accuracy_score, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay
-from sklearn.model_selection import cross_val_score, KFold, train_test_split
+from sklearn.model_selection import cross_val_score, KFold, train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import resample
@@ -149,8 +149,22 @@ features = pd.DataFrame(scaled_features, columns=column_names)
 x_train, x_test, y_train, y_test = train_test_split(features, target, test_size=0.2)
 
 # Logistic Regression
-# lr_model = LogisticRegression(solver="liblinear", random_state=0)
-lr_model = LogisticRegression(solver='lbfgs')
+# lr_model = LogisticRegression()
+# Using Randomized grid search fine tune your model
+# LRparam_grid = {
+#     'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
+#     'penalty': ['l1', 'l2'],
+#     # 'max_iter': list(range(100,800,100)),
+#     'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
+# }
+# LR_search = GridSearchCV(lr_model, param_grid=LRparam_grid, refit = True, verbose = 3, cv=5)
+# Fit the model
+# LR_search.fit(x_train , y_train)
+# Print out the best parameters
+# LR_search.best_params_
+# y_pred = LR_search.best_estimator_.predict(x_test)
+
+lr_model = LogisticRegression(solver="liblinear", C=0.001, penalty="l1", random_state=1)
 lr_model.fit(x_train, y_train)
 
 crossvalidation = KFold(n_splits=10, shuffle=True, random_state=1)
@@ -177,9 +191,6 @@ plt.show()
 
 joblib.dump(lr_model, "./lr_model.pkl")
 print("Model dumped!")
-
-joblib.dump(column_names, "./lr_model_columns.pkl")
-print("Model columns dumped!")
 
 # Decision Trees
 dt_model = DecisionTreeClassifier(
@@ -208,6 +219,3 @@ plt.show()
 
 joblib.dump(lr_model, "./dt_model.pkl")
 print("Model dumped!")
-
-joblib.dump(column_names, "./dt_model_columns.pkl")
-print("Model columns dumped!")
