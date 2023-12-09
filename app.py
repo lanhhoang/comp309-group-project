@@ -13,9 +13,11 @@ import sys
 import pandas as pd
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from sklearn.metrics import accuracy_score
 
 app = Flask(__name__)
+cors = CORS(app)
 
 @app.route("/predict", methods=["GET", "POST"])
 def predict():
