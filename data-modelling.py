@@ -192,6 +192,7 @@ print('Accuracy(N): \n', accuracy_score(y_test, lr_y_pred))
 print("ROC-AUC:", roc_auc_score(y_test, lr_y_pred))
 
 plt.style.use("ggplot")
+plt.figure(figsize=(10, 10))  
 cm = confusion_matrix(y_test, lr_y_pred, labels=lr_model.classes_)
 disp = ConfusionMatrixDisplay(
     confusion_matrix=cm, display_labels=lr_model.classes_)
@@ -225,6 +226,7 @@ print('Accuracy(N): \n', accuracy_score(y_test, dt_y_pred))
 print("ROC-AUC:", roc_auc_score(y_test, dt_y_pred))
 
 plt.style.use("ggplot")
+plt.figure(figsize=(10, 10)) 
 cm = confusion_matrix(y_test, dt_y_pred, labels=dt_model.classes_)
 disp = ConfusionMatrixDisplay(
     confusion_matrix=cm, display_labels=dt_model.classes_)
